@@ -1,0 +1,13 @@
+xgboost
+tensorflow
+pandas
+numpy
+scikit-learn
+sqlalchemy
+psycopg2-binary
+jupyter
+python-dotenv
+seaborn
+fastapi
+uvicorn
+pydantic
