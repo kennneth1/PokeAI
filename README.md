@@ -2,7 +2,8 @@
 - cd into training then create and start a virtual env, then `pip install -r requirements.txt`
 - run `experiment.ipynb` which trains a XGBoost regressor model to predict price of cards
 
-### Dockerize and test locally
+### Testing Inference: Dockerize and test locally
+- cd into inference then start up docker and run the following commands:
 - `docker build -t fastapi-model .`
 - `docker run -d -p 80:80 fastapi-model`
 
