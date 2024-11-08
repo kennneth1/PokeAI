@@ -23,4 +23,6 @@
     "ir_score": 0
 }'`
 
+- Use CURL instead of Invoke-RestMethod if on Linux
+
 
