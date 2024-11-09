@@ -9,7 +9,7 @@
 - `docker build -t fastapi-model .`
 - `docker run -d -p 80:80 fastapi-model`
 
-`Invoke-RestMethod -Uri "http://127.0.0.1:8000/predict" -Method POST -ContentType "application/json; charset=utf-8" -Body '{
+`Invoke-RestMethod -Uri "http://127.0.0.1:80/predict" -Method POST -ContentType "application/json; charset=utf-8" -Body '{
     "mos_since_release": 5,
     "num_grade": 10,
     "is_secret": 1,
