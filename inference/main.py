@@ -6,15 +6,16 @@ from pydantic import BaseModel
 
 class PredictionRequest(BaseModel):
     mos_since_release: float
-    is_near_mint_ungraded: float
-    grade_category: int
+    num_grade: int
     is_secret: float
     is_full_art: float
     is_eeveelution: float
     is_legendary: float
     is_og_char: float
-    is_gallery: float
+    is_tag_team: float
+    is_alt_art: float
     bb_mo_price_by_set: float
+    avg_mo_price_by_grade_set: float
     ir_score: float
 
 # Initialize FastAPI app
@@ -22,7 +23,7 @@ app = FastAPI()
 
 # Load the trained XGBoost model
 model = xgb.XGBRegressor()
-model.load_model('my_mod.bin')  # Load the saved binary model
+model.load_model('models/my_model.bin')  # Load the saved binary model
 feature_names = model.get_booster().feature_names
 print("Feature names:", feature_names)
 
@@ -32,14 +33,15 @@ def predict(request: PredictionRequest):
         # Convert the input data to a numpy array for prediction
         data = np.array([[
             request.mos_since_release,
-            request.is_near_mint_ungraded,
-            request.grade_category,
+            request.num_grade,
             request.is_secret,
             request.is_full_art,
             request.is_eeveelution,
             request.is_legendary,
             request.is_og_char,
-            request.is_gallery,
+            request.is_tag_team,
+            request.is_alt_art,
+            request.avg_mo_price_by_grade_set,
             request.bb_mo_price_by_set,
             request.ir_score
         ]])  # Ensure it's a 2D array for prediction
