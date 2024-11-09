@@ -1,22 +1,22 @@
 from fastapi import FastAPI
 import xgboost as xgb
 import numpy as np
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class PredictionRequest(BaseModel):
-    mos_since_release: float
-    num_grade: int
-    is_secret: float
-    is_full_art: float
-    is_eeveelution: float
-    is_legendary: float
-    is_og_char: float
-    is_tag_team: float
-    is_alt_art: float
-    bb_mo_price_by_set: float
-    avg_mo_price_by_grade_set: float
-    ir_score: float
+    mos_since_release: int = Field(..., ge=0, description="Months since release, must ge 0")
+    num_grade: int = Field(..., ge=1, le=10, description="Numerical PSA grade between 1 and 10")
+    is_secret: int = Field(..., ge=0, le=1, description="Binary flag (0 or 1)")
+    is_full_art: int = Field(..., ge=0, le=1, description="Binary flag (0 or 1)")
+    is_eeveelution: int = Field(..., ge=0, le=1, description="Binary flag (0 or 1)")
+    is_legendary: int = Field(..., ge=0, le=1, description="Binary flag (0 or 1)")
+    is_og_char: int = Field(..., ge=0, le=1, description="Binary flag (0 or 1)")
+    is_tag_team: int = Field(..., ge=0, le=1, description="Binary flag (0 or 1)")
+    is_alt_art: int = Field(..., ge=0, le=1, description="Binary flag (0 or 1)")
+    bb_mo_price_by_set: float = Field(..., ge=10, description="Avg booster box price of set for this month")
+    avg_mo_price_by_grade_set: float = Field(..., ge=10, description="Avg price of set/grade for this month")
+    ir_score: int = Field(..., ge=0, le=3, description="3 for SIR, 1 for IR")
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -28,7 +28,7 @@ feature_names = model.get_booster().feature_names
 print("Feature names:", feature_names)
 
 @app.post("/predict")
-def predict(request: PredictionRequest):
+async def predict(request: PredictionRequest):
     try:
         # Convert the input data to a numpy array for prediction
         data = np.array([[
@@ -48,7 +48,7 @@ def predict(request: PredictionRequest):
 
         # Predict using the model
         prediction = model.predict(data)
-        
-        return {"prediction": round(prediction.tolist()[0],2)}
+        predicted_price = round(prediction.tolist()[0], 2)
+        return {"prediction": predicted_price}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error occurred: {str(e)}")
