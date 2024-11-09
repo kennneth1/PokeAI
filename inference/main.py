@@ -2,7 +2,8 @@ from fastapi import FastAPI
 import xgboost as xgb
 import numpy as np
 from pydantic import BaseModel, Field
-
+from fastapi import HTTPException, Request
+from fastapi.responses import JSONResponse
 
 class PredictionRequest(BaseModel):
     mos_since_release: int = Field(..., ge=0, description="Months since release, must ge 0")
@@ -52,3 +53,15 @@ async def predict(request: PredictionRequest):
         return {"prediction": predicted_price}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error occurred: {str(e)}")
+
+
+class InvalidDataError(Exception):
+    def __init__(self, name: str):
+        self.name = name
+
+@app.exception_handler(InvalidDataError)
+async def invalid_data_handler(request: Request, exc: InvalidDataError):
+    return JSONResponse(
+        status_code=400,
+        content={"message": f"Invalid data provided: {exc.name}"}
+    )
